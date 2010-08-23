@@ -1,0 +1,28 @@
+name                          : shell-escape
+version                       : 0.0.0
+category                      : Text
+license                       : BSD3
+license-file                  : LICENSE
+author                        : Jason Dusek
+maintainer                    : oss@solidsnack.be
+homepage                      : http://github.com/solidsnack/shell-escape
+synopsis                      : Shell escaping library.
+description                   : Shell escaping library.
+
+cabal-version                 : >= 1.6
+build-type                    : Simple
+extra-source-files            : README
+
+
+library
+  build-depends               : base >= 2 && <= 5
+                              , binary
+                              , containers
+                              , vector >= 0.6.0.2
+                              , bytestring >= 0.9
+  exposed-modules             : Text.ShellEscape
+                                Text.ShellEscape.Escape
+                                Text.ShellEscape.Sh
+                                Text.ShellEscape.Bash
+                                Text.ShellEscape.Put
+
