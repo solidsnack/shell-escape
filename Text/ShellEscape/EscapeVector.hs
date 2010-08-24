@@ -10,6 +10,7 @@ import qualified Data.Vector.Mutable as Vector
 
 import qualified Text.ShellEscape.Put as Put
 
+
 type EscapeVector escapingMode = Vector (Char, escapingMode)
 
 escWith :: (Char -> escapingMode) -> ByteString -> EscapeVector escapingMode
