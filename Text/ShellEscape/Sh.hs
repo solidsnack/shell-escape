@@ -1,9 +1,6 @@
 
 module Text.ShellEscape.Sh where
 
-import Data.ByteString.Char8 (ByteString)
-import qualified Data.ByteString.Char8 as ByteString
-
 import Text.ShellEscape.Escape
 import qualified Text.ShellEscape.Put as Put
 import Text.ShellEscape.EscapeVector
