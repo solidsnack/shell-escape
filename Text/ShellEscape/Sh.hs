@@ -4,39 +4,22 @@ module Text.ShellEscape.Sh where
 import Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as ByteString
 
-import Data.Vector (Vector)
-import qualified Data.Vector as Vector
-import qualified Data.Vector.Mutable as Vector
-
 import Text.ShellEscape.Escape
 import qualified Text.ShellEscape.Put as Put
+import Text.ShellEscape.EscapeVector
 
 
-newtype Sh                   =  Sh (Vector (Char, EscapingMode))
+newtype Sh                   =  Sh (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
 instance Escape Sh where
-  escape b                   =  Sh . Vector.create $ do
-    v                       <-  Vector.new (ByteString.length b)
-    sequence_ . snd $ ByteString.foldl' (f v) (0, []) b
-    return v
+  escape                     =  Sh . escWith classify
+  unescape (Sh v)            =  stripEsc v
+  bytes (Sh v)               =  interpretEsc v act finish ([], Literal)
    where
-    f v (i, ops) c           =  (i + 1, Vector.write v i (c, classify c) : ops)
-  unescape (Sh v)            =  ByteString.unfoldr f . fst $ Vector.unzip v
-   where
-    f v | Vector.null v      =  Nothing
-        | otherwise          =  Just (Vector.unsafeHead v, Vector.unsafeTail v)
-  bytes (Sh v)               =  eval instructions
-   where
-    eval                     =  fin . Put.runPut' . sequence_ . reverse
-    (instructions, final)    =  Vector.foldl' f ([], Literal) v
-     where
-      f (list, mode) e       =  (put:list, mode')
-       where
-        (put, mode')         =  act mode e
-    fin | final == Quote     =  (`ByteString.snoc` '\'')
-        | final == Backslash =  (`ByteString.snoc` '\\')
-        | otherwise          =  id
+    finish Quote             =  Put.putChar '\''
+    finish Backslash         =  Put.putChar '\\'
+    finish Literal           =  return ()
 
 
 --  Accept the present escaping mode and desired escaping mode and yield an
