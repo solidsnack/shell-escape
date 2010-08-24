@@ -1,25 +1,30 @@
 
 module Text.ShellEscape.Bash where
 
+import Data.Maybe
 import Data.Char
-import Data.ByteString.Char8
+import Text.Printf
+
+import qualified Data.Vector as Vector
 
 import Text.ShellEscape.Escape
 import qualified Text.ShellEscape.Put as Put
+import Text.ShellEscape.EscapeVector
 
 
-newtype Bash                 =  Bash (Vector (Char, EscapingMode))
+newtype Bash                 =  Bash (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
 instance Escape Bash where
-  escape b                   =  Bash . Vector.create $ do
-    v                       <-  Vector.new (ByteString.length b)
-    sequence_ . snd $ ByteString.foldl' (f v) (0, []) b
-    return v
+  escape                     =  Bash . escWith classify
+  unescape (Bash v)          =  stripEsc v
+  bytes (Bash v) | literal v =  stripEsc v
+                 | otherwise =  interpretEsc v renderANSI' end (begin, Literal)
    where
-    f v (i, ops) c           =  (i + 1, Vector.write v i (c, classify c) : ops)
-  bytes (Bash b)             =  b
-
+    literal                  =  isNothing . Vector.find ((/= Literal) . snd)
+    begin                    =  [      Put.putString "$'"]
+    end                      =  const (Put.putChar '\'')
+    renderANSI' _ (c, e)     =  (renderANSI c, e)
 
 data EscapingMode            =  ANSIHex | ANSIBackslash | Literal
  deriving (Eq, Ord, Show)
@@ -37,6 +42,7 @@ backslashify c               =  (take 2 . drop 1 . show) c
 hexify                      ::  Char -> String
 hexify                       =  printf "\\x%02X" . ord
 
+classify                    ::  Char -> EscapingMode
 classify c | c <= '\ACK'     =  ANSIHex
            | c <= '\r'       =  ANSIBackslash
            | c <= '\SUB'     =  ANSIHex
