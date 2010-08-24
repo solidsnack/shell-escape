@@ -26,12 +26,13 @@ instance Escape Bash where
     end                      =  const (Put.putChar '\'')
     renderANSI' _ (c, e)     =  (renderANSI c, e)
 
-data EscapingMode            =  ANSIHex | ANSIBackslash | Literal
+data EscapingMode            =  ANSIHex | ANSIBackslash | Literal | Quoted
  deriving (Eq, Ord, Show)
 
 renderANSI c =
   case classify c of
     Literal                 ->  Put.putChar     c
+    Quoted                  ->  Put.putChar     c
     ANSIHex                 ->  Put.putString $ hexify c
     ANSIBackslash           ->  Put.putString $ backslashify c
 
@@ -48,9 +49,17 @@ classify c | c <= '\ACK'     =  ANSIHex
            | c <= '\SUB'     =  ANSIHex
            | c == '\ESC'     =  ANSIBackslash
            | c <= '\US'      =  ANSIHex
-           | c <= '&'        =  Literal
+           | c <= '&'        =  Quoted
            | c == '\''       =  ANSIBackslash
-           | c <= '~'        =  Literal
+           | c <= '+'        =  Quoted
+           | c <= '9'        =  Literal
+           | c <= '?'        =  Quoted
+           | c <= 'Z'        =  Literal
+           | c == '['        =  Quoted
+           | c == '\\'       =  ANSIBackslash
+           | c <= '`'        =  Quoted
+           | c <= 'z'        =  Literal
+           | c <= '~'        =  Quoted
            | c == '\DEL'     =  ANSIHex
            | otherwise       =  ANSIHex
 
