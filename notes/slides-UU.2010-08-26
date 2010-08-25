@@ -1,0 +1,81 @@
+                             Why Shell Escaping?
+
+  Sometimes, we need to run a program in an environment where only the UNIX
+  shell sure to be available:
+
+ .  Post-install and pre-install scripts for packages.
+
+ .  Remote machines at various levels of up-to-dateness.
+
+  Shell is consistent, available and fast. However, it is also error prone and
+  tiresome; we can compile high level descriptions of operations -- for
+  example, a configuration change -- safely if we have a good shell escaping
+  library.
+
+
+
+
+
+
+
+                        The Shell -- A Handy Language.
+
+Shortcuts like *, &.c
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              A Danger Lurks...
+
+<bad script>
+
+  Correctly escaping arguments in the shell is challenging and takes years of
+  experience.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                   The End
+
+
+
+
+
+
+
+
+
+
+
