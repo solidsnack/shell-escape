@@ -1,4 +1,5 @@
 
+OPTS ?= ''
 RUNS ?= 10000
 GHC = ghc --make -outputdir
 
@@ -24,7 +25,7 @@ test: test/chars.histogram test/lengths.histogram
 .PHONY: test_run
 test_run: test/echo
 	rm -f test/chars test/lengths
-	cd test && ./echo ${RUNS}
+	cd test && ./echo ${OPTS} ${RUNS}
 
 test/chars: test_run
 test/chars.histogram: test/chars

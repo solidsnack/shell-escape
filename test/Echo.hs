@@ -11,6 +11,8 @@ import qualified Data.ByteString.Char8 as Char8
 import Data.Word
 import Control.Monad
 import Text.Printf
+import Data.IORef
+import Data.List
 
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
@@ -24,7 +26,11 @@ prop_echoBash                =  something_prop escapeBash
 prop_echoSh                 ::  ByteString -> Property
 prop_echoSh                  =  something_prop escapeSh
 
-something_prop esc b         =  monadicIO (assert =<< run (echoTest (esc b)))
+something_prop esc b         =  monadicIO $ do
+  (pre . not) (b `elem` optionsEchoGNU)
+  assert =<< run (echoTest (esc b))
+ where
+  optionsEchoGNU             =  ["-n", "-e", "-E", "--help", "--version"]
 
 escapeSh                    ::  ByteString -> Sh
 escapeSh b                   =  escape b
@@ -88,21 +94,37 @@ instance Arbitrary Word8 where
                                                           , 0xFF :: Int ))
 
 main                         =  do
+  runSh                     <-  newIORef True
+  runBash                   <-  newIORef True
+  testsR                    <-  newIORef 10000
+  let testsRwrite            =  writeIORef testsR
+      noBash                 =  writeIORef runBash False
+      noSh                   =  writeIORef runSh False
   args                      <-  getArgs
-  tests                     <-  case args of
-                                  [arg]       ->  return $ read arg
-                                  []          ->  return 100000
-                                  _           ->  error "Invalid arguments."
+  case (sort . nub) args of
+    ["--bash", "--sh", d]   ->  testsRwrite (read d)
+    ["--bash", "--sh"   ]   ->  return ()
+    ["--bash",         d]   ->  noSh >> testsRwrite (read d)
+    [          "--sh", d]   ->  noBash >> testsRwrite (read d)
+    [                  d]   ->  testsRwrite (read d)
+    [                   ]   ->  return ()
+    _                       ->  error "Invalid arguments."
+  tests                     <-  readIORef testsR
   let msg                    =  "Performing " ++ show tests ++ " tests."
       qcArgs                 =  Args Nothing tests tests 32
       qc                     =  quickCheckWith qcArgs
   err "Tests are random ByteStrings, containing any byte but null."
---err "Testing Bourne Shell escaping."
---err (Char8.pack msg)
---qc prop_echoSh
-  err "Testing Bash escaping."
-  err (Char8.pack msg)
-  qc prop_echoBash
+  runSh ?> do
+    err "Testing Sh escaping."
+    err (Char8.pack msg)
+    qc prop_echoSh
+  runBash ?> do
+    err "Testing Bash escaping."
+    err (Char8.pack msg)
+    qc prop_echoBash
 
 err                          =  hPutStrLn stderr
+
+(?>)                        ::  IORef Bool -> IO () -> IO ()
+ref ?> action                =  readIORef ref >>= (`when` action)
 
