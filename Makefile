@@ -13,13 +13,24 @@ prof/echo: test/Echo.hs
 clean:
 	rm -rf */build
 
-.PHONY: test
-test: test/echo
-	cd test && ./echo ${RUNS}
-	sort < test/chars | uniq -c > test/chars.histogram
-	sort -n < test/lengths | uniq -c > test/lengths.histogram
 
 .PHONY: prof
 prof: prof/echo
 	cd prof && ./echo ${RUNS} +RTS -hb -RTS && hp2ps echo.hp
+
+
+test: test/chars.histogram test/lengths.histogram
+
+.PHONY: test_run
+test_run: test/echo
+	rm -f test/chars test/lengths
+	cd test && ./echo ${RUNS}
+
+test/chars: test_run
+test/chars.histogram: test/chars
+	sort < $< | uniq -c > $@
+
+test/lengths: test_run
+test/lengths.histogram: test/lengths
+	sort -n < $< | uniq -c > $@
 
