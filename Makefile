@@ -12,7 +12,7 @@ prof/echo: test/Echo.hs
 	${GHC} prof/build test/Echo.hs -o prof/echo -prof -auto-all
 
 clean:
-	rm -rf */build
+	rm -rf */build */echo test/lengths* test/chars*
 
 
 .PHONY: prof
