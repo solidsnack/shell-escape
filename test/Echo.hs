@@ -79,12 +79,9 @@ bash s = runInteractiveProcess "bash" ["-c", s] Nothing Nothing
 
 instance Arbitrary ByteString where
   arbitrary                  =  do
-    a                       <-  fmap pack arbitrary
-    b                       <-  fmap pack arbitrary
-    c                       <-  fmap pack arbitrary
-    d                       <-  fmap pack arbitrary
-    e                       <-  fmap pack arbitrary
-    return (Data.ByteString.concat [a,b,c,d,e])
+    bytes                   <-  arbitrary :: Gen [Word8]
+    NonEmpty bytes'         <-  arbitrary :: Gen (NonEmptyList Word8)
+    pack `fmap` elements [bytes', bytes', bytes, bytes', bytes']
 
 instance Arbitrary Word8 where
   arbitrary                  =  fmap fromIntegral (choose ( 0x01 :: Int
