@@ -1,5 +1,5 @@
 
-OPTS ?= ''
+OPTS ?= --bash
 RUNS ?= 10000
 GHC = ghc --make -outputdir
 
