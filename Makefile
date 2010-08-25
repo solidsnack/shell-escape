@@ -15,7 +15,9 @@ clean:
 
 .PHONY: test
 test: test/echo
-	test/echo ${RUNS}
+	cd test && ./echo ${RUNS}
+	sort < test/chars | uniq -c > test/chars.histogram
+	sort -n < test/lengths | uniq -c > test/lengths.histogram
 
 .PHONY: prof
 prof: prof/echo

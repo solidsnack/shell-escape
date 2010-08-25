@@ -5,10 +5,12 @@ import System.Environment
 import System.Process (runInteractiveProcess, waitForProcess, ProcessHandle)
 import System.IO (Handle, stderr, stdout, stdin)
 import Data.ByteString (ByteString, pack, hGetContents, hPutStrLn)
+import qualified Data.ByteString
 import Data.ByteString.Char8 (unpack)
-import qualified Data.ByteString.Char8 as Char8 (pack)
+import qualified Data.ByteString.Char8 as Char8
 import Data.Word
 import Control.Monad
+import Text.Printf
 
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
@@ -16,20 +18,24 @@ import Test.QuickCheck.Monadic
 import Text.ShellEscape
 
 
-prop_echoSh                 ::  Property
-prop_echoSh                  =  monadicIO $ do
-  b                         <-  pick arbitrary
-  assert =<< run (echoTest (escape b :: Sh)) 
+prop_echoBash               ::  ByteString -> Property
+prop_echoBash                =  something_prop escapeBash
 
+prop_echoSh                 ::  ByteString -> Property
+prop_echoSh                  =  something_prop escapeSh
 
-prop_echoBash               ::  Property
-prop_echoBash                =  monadicIO $ do
-  b                         <-  pick arbitrary
-  assert =<< run (echoTest (escape b :: Bash)) 
+something_prop esc b         =  monadicIO (assert =<< run (echoTest (esc b)))
 
+escapeSh                    ::  ByteString -> Sh
+escapeSh b                   =  escape b
+
+escapeBash                  ::  ByteString -> Bash
+escapeBash b                 =  escape b
 
 echoTest escaped             =  do
   b                         <-  echo escaped
+  Data.ByteString.appendFile "./lengths" (displayLength unescaped)
+  Data.ByteString.appendFile "./chars" (displayBytes unescaped)
   when (b /= unescaped) $ do
     err "Echo result differs from unescaped result:"
     err "Escaped form:"
@@ -52,6 +58,14 @@ echo escaped                 =  do
   raw                        =  bytes escaped
 
 
+displayBytes                 =  Char8.pack . unlines
+                             .  fmap (\w ->  printf "0x%02x" w)
+                             .  Data.ByteString.unpack
+
+displayLength                =  Char8.pack
+                             .  (\w ->  printf "%4d\n" w)
+                             .  Data.ByteString.length
+
 class (Escape t) => Shell t where
   shell :: t -> String -> IO (Handle, Handle, Handle, ProcessHandle)
 instance Shell Sh where
@@ -64,7 +78,13 @@ sh s = runInteractiveProcess "sh" ["-c", s] Nothing Nothing
 bash s = runInteractiveProcess "bash" ["-c", s] Nothing Nothing
 
 instance Arbitrary ByteString where
-  arbitrary                  =  fmap pack arbitrary
+  arbitrary                  =  do
+    a                       <-  fmap pack arbitrary
+    b                       <-  fmap pack arbitrary
+    c                       <-  fmap pack arbitrary
+    d                       <-  fmap pack arbitrary
+    e                       <-  fmap pack arbitrary
+    return (Data.ByteString.concat [a,b,c,d,e])
 
 instance Arbitrary Word8 where
   arbitrary                  =  fmap fromIntegral (choose ( 0x01 :: Int
@@ -77,7 +97,7 @@ main                         =  do
                                   []          ->  return 100000
                                   _           ->  error "Invalid arguments."
   let msg                    =  "Performing " ++ show tests ++ " tests."
-      qcArgs                 =  Args Nothing tests tests 128
+      qcArgs                 =  Args Nothing tests tests 32
       qc                     =  quickCheckWith qcArgs
   err "Tests are random ByteStrings, containing any byte but null."
 --err "Testing Bourne Shell escaping."
