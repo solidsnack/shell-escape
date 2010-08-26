@@ -8,7 +8,7 @@ import Data.ByteString (ByteString)
 
 import qualified Data.Vector as Vector
 
-import Text.ShellEscape.Escape as Class
+import Text.ShellEscape.Escape
 import qualified Text.ShellEscape.Put as Put
 import Text.ShellEscape.EscapeVector
 
@@ -17,16 +17,7 @@ newtype Bash                 =  Bash (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
 
-escape                      ::  ByteString -> Bash
-escape                       =  Class.escape
-
-unescape                    ::  Bash -> ByteString
-unescape                     =  Class.unescape
-
-bytes                       ::  Bash -> ByteString
-bytes                        =  Class.bytes
-
-instance Class.Escape Bash where
+instance Escape Bash where
   escape                     =  Bash . escWith classify
   unescape (Bash v)          =  stripEsc v
   bytes (Bash v) | literal v =  stripEsc v

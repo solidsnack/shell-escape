@@ -6,7 +6,7 @@ import Data.ByteString.Char8
 
 import Criterion.Main
 
-import qualified Text.ShellEscape.Bash as Bash
+import Text.ShellEscape
 
 
 strings                     ::  [ByteString]
@@ -20,5 +20,7 @@ strings =
 
 main                         =  defaultMain $ fmap bench' strings
  where
-  bench' s                   =  bench (show s) (whnf Bash.escape s)
+  bench' s                   =  bench (show s) (whnf escape' s)
+  escape'                   ::  ByteString -> Bash
+  escape'                    =  escape
 
