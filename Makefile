@@ -5,7 +5,7 @@ GHC = ghc --make -outputdir
 
 
 clean:
-	rm -rf */build */echo test/lengths* test/chars*
+	rm -rf */build */echo bench/bench test/lengths* test/chars*
 
 
 .PHONY: bench
