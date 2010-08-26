@@ -34,7 +34,7 @@ test/echo: test/Echo.hs
 
 .PHONY: test_run
 test_run: test/echo
-	rm -f test/chars test/lengths
+	rm -f test/chars* test/lengths*
 	cd test && ./echo ${OPTS} ${RUNS}
 
 test/chars: test_run
