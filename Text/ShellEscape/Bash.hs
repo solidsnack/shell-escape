@@ -4,10 +4,11 @@ module Text.ShellEscape.Bash where
 import Data.Maybe
 import Data.Char
 import Text.Printf
+import Data.ByteString (ByteString)
 
 import qualified Data.Vector as Vector
 
-import Text.ShellEscape.Escape
+import Text.ShellEscape.Escape as Class
 import qualified Text.ShellEscape.Put as Put
 import Text.ShellEscape.EscapeVector
 
@@ -15,7 +16,17 @@ import Text.ShellEscape.EscapeVector
 newtype Bash                 =  Bash (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
-instance Escape Bash where
+
+escape                      ::  ByteString -> Bash
+escape                       =  Class.escape
+
+unescape                    ::  Bash -> ByteString
+unescape                     =  Class.unescape
+
+bytes                       ::  Bash -> ByteString
+bytes                        =  Class.bytes
+
+instance Class.Escape Bash where
   escape                     =  Bash . escWith classify
   unescape (Bash v)          =  stripEsc v
   bytes (Bash v) | literal v =  stripEsc v
@@ -25,6 +36,7 @@ instance Escape Bash where
     begin                    =  [      Put.putString "$'"]
     end                      =  const (Put.putChar '\'')
     renderANSI' _ (c, e)     =  (renderANSI c, e)
+
 
 data EscapingMode            =  ANSIHex | ANSIBackslash | Literal | Quoted
  deriving (Eq, Ord, Show)
