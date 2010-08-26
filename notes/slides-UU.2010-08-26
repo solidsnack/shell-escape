@@ -9,10 +9,10 @@
 
   Shell is consistently available and fast. However, it is also error prone
   and tiresome. We can compile high level descriptions of change to a system
-  -- adding a user or changing a few files -- safely if we have a good shell
-  escaping library.
+  for a gain in safety, while retaining speed and ease of deployment.
 
-
+  A correct shell escaper is an essential first step to compiling shell
+  scripts.
 
 
 
@@ -228,13 +228,63 @@
  .  Good performance, allowing escaping of thousands of strings in a short
     period of time.
 
-      ->  
+      ->  Longish strings with spaces and ampersands from my Music folder
+          require <6µs and little effort has been made to optimize.
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+                         Ways Haskell Helps This Work
+
+ .  QuickCheck allowed me to randomly test more than a million random
+    ByteStrings in a short time, finding and fixing numerous odd cases.
+
+ .  Criterion makes it easy to write quality benchmarks. In my case, 20
+    minutes from learning the name of the library to running my first
+    benchmark.
+
+ .  Efficient algorithms for Vector and ByteString offered good baseline
+    performance while saving me the trouble of optimization and tuning.
+
+ .  Option to export SOs makes this library available to users of other
+    languages.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Thank You
 
 
 
@@ -259,7 +309,7 @@
 
 
 
-                                   The End
+                  http://github.com/solidsnack/shell-escape
 
 
 
