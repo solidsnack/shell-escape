@@ -23,7 +23,7 @@
 
 
 
-                        The Shell -- A Handy Language.
+                        The Shell -- A Handy Language
 
   The shell is a simple tool for calling other tools in the UNIX filesystem.
   Every line is split on spaces and (eliding many details) turned in to an
@@ -48,7 +48,7 @@
 
 
 
-                       The Shell -- A Subtle Language.
+                       The Shell -- A Subtle Language
 
   A very similar line has a very different meaning:
 
@@ -73,7 +73,7 @@
 
 
 
-                           Many Special Characters.
+                           Many Special Characters
 
   There are many characters that sometimes trigger special behaviour in the
   shell:
@@ -98,7 +98,7 @@
 
 
 
-             Special Characters Frustrate Compilation of Scripts
+                       Compilation & Special Characters
 
   When generating shell scripts, the subtleties of special characters are more
   than an inconvenience.
