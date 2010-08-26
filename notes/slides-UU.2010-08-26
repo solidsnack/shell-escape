@@ -1,3 +1,28 @@
+
+
+
+
+
+
+
+
+
+
+                           A Shell Escaping Library
+
+                                 Jason Dusek
+
+
+
+
+
+
+
+
+
+
+
+
                              Why Shell Escaping?
 
   Sometimes, we need to run a program in environments where only the UNIX
