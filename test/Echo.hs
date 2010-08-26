@@ -29,8 +29,6 @@ prop_echoSh                  =  something_prop escapeSh
 something_prop esc b         =  monadicIO $ do
   (pre . not) (b `elem` optionsEchoGNU)
   assert =<< run (echoTest (esc b))
- where
-  optionsEchoGNU             =  ["-n", "-e", "-E", "--help", "--version"]
 
 escapeSh                    ::  ByteString -> Sh
 escapeSh b                   =  escape b
@@ -114,6 +112,7 @@ main                         =  do
       qcArgs                 =  Args Nothing tests tests 32
       qc                     =  quickCheckWith qcArgs
   err "Tests are random ByteStrings, containing any byte but null."
+  err (Char8.unwords ("GNU `echo' options are discarded:":optionsEchoGNU))
   runSh ?> do
     err "Testing Sh escaping."
     err (Char8.pack msg)
@@ -127,4 +126,6 @@ err                          =  hPutStrLn stderr
 
 (?>)                        ::  IORef Bool -> IO () -> IO ()
 ref ?> action                =  readIORef ref >>= (`when` action)
+
+optionsEchoGNU               =  ["-n", "-e", "-E", "--help", "--version"]
 
