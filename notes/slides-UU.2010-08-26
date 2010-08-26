@@ -54,7 +54,7 @@
 
     find ../* -name *.h
 
-    exec("find", {"../access", ..., "../request", "-name", "user.h", "klm.h"});
+    exec("find", {"../access", ..., "../request", "-name", "user.h", "mfs.h"});
 
   There were header files `mfs.h' and `user.h' in the present directory; we
   end up making an invalid call to `find'. However, if there were no header
