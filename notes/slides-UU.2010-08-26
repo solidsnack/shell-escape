@@ -131,8 +131,8 @@
 
  .  Offer unescaping as well as escaping.
 
- .  Good performance, allowing escaping of thousands of strings in a short
-    period of time.
+ .  Good performance, escaping thousands of strings in a few seconds.
+
 
 
 
@@ -175,6 +175,8 @@
 
                                  Why Haskell?
 
+
+
  .  Offer a type level distinction between escaped and unescaped strings.
 
       ->  Haskell's `data' and `newtype' declarations allow lightweight
@@ -195,10 +197,12 @@
 
 
 
-
-
 
                                  Why Haskell?
+
+
+
+
 
  .  Offer unescaping as well as escaping.
 
@@ -218,23 +222,19 @@
 
 
 
-
-
-
-
 
                                  Why Haskell?
 
- .  Good performance, allowing escaping of thousands of strings in a short
-    period of time.
+
+
+
+
+
+
+ .  Good performance, escaping thousands of strings in a few seconds.
 
       ->  Longish strings with spaces and ampersands from my Music folder
           require <6µs and little effort has been made to optimize.
-
-
-
-
-
 
 
 
