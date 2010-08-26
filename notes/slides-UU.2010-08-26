@@ -31,7 +31,7 @@
 
     find ../parser -name '*.h'                            # Find header files.
 
-  Becomes something like:
+                                   becomes
 
     exec("find", {"../parser", "-name", "*.h"});             /* Not real C. */
 
@@ -61,11 +61,11 @@
   files in the present directory, the argument would have been passed
   unchanged; we have neither consistent failure nor consistent success.
 
+    echo .*
+    . ..
 
-
-
-
-
+    echo ...*
+    ...*
 
 
 
@@ -81,9 +81,9 @@
     $   *   {}   &   ()   >   <   ?   ~   !   :             # And many more...
 
   It's possible to use these characters in shell commands without errors most
-  of the time -- but using them without failure all the time requires
-  advanced knowledge of shell escaping.
-
+  of the time. It's also works most of the time to act as if shell arguments
+  will never have these characters. Thus the famed brittleness of shell
+  scripts.
 
 
 
@@ -109,8 +109,8 @@
  .  Auditing generated code is, in general, much less tractable than auditing
     code one has written.
 
- .  Automation tools that only partially work demand workarounds which are
-    sometimes as complicated as re-implementing the entire tool.
+ .  Automation tools that only partially work often demand workarounds which
+    require as much understanding as implementing the tool.
 
  .  Automation will generally be applied broadly; it is difficult to
     anticipate the kinds of filenames and arguments that will be used with
@@ -152,7 +152,7 @@
 
  .  Escape any byte sequence.
 
-      ->  Haskell ByteString is an efficient and safe interface to raw byte
+      ->  Haskell's ByteString is an efficient and safe interface to raw byte
           arrays.
 
 
@@ -202,9 +202,9 @@
 
  .  Offer unescaping as well as escaping.
 
-      ->  Laziness allows us to treat and intermediate step in escaping --
-          pairing a character with its escape class -- as an intermediate
-          data structure with minimal overhead.
+      ->  Laziness allows us to treat an intermediate step in escaping --
+          pairing a character with its escape class -- as the fundamental
+          representation of an escaped string with minimal overhead.
 
 
 
@@ -248,7 +248,7 @@
 
 
 
-                         Ways Haskell Helps This Work
+                               Haskell Niceties
 
  .  QuickCheck allowed me to randomly test more than a million random
     ByteStrings in a short time, finding and fixing numerous odd cases.
@@ -258,7 +258,7 @@
     benchmark.
 
  .  Efficient algorithms for Vector and ByteString offered good baseline
-    performance while saving me the trouble of optimization and tuning.
+    performance, saving me the trouble of optimization and tuning.
 
  .  Option to export SOs makes this library available to users of other
     languages.
