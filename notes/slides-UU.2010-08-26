@@ -1,16 +1,21 @@
                              Why Shell Escaping?
 
-  Sometimes, we need to run a program in an environment where only the UNIX
-  shell sure to be available:
+  Sometimes, we need to run a program in environments where only the UNIX
+  shell is sure to be available:
 
  .  Post-install and pre-install scripts for packages.
 
  .  Remote machines at various levels of up-to-dateness.
 
-  Shell is consistent, available and fast. However, it is also error prone and
-  tiresome; we can compile high level descriptions of operations -- for
-  example, a configuration change -- safely if we have a good shell escaping
-  library.
+  Shell is consistently available and fast. However, it is also error prone
+  and tiresome. We can compile high level descriptions of change to a system
+  -- adding a user or changing a few files -- safely if we have a good shell
+  escaping library.
+
+
+
+
+
 
 
 
@@ -20,7 +25,137 @@
 
                         The Shell -- A Handy Language.
 
-Shortcuts like *, &.c
+  The shell is a simple tool for calling other tools in the UNIX filesystem.
+  Every line is split on spaces and (eliding many details) turned in to an
+  `exec' call:
+
+    find ../parser -name '*.h'                            # Find header files.
+
+  Becomes something like:
+
+    exec("find", {"../parser", "-name", "*.h"});             /* Not real C. */
+
+  The shell treats some characters specially, expanding them in to filenames
+  depending on what files are present:
+
+    find ../* -name '*.h'
+
+    exec("find", {"../access", ..., "../request", "-name", "*.h"});
+
+
+
+
+
+
+
+                       The Shell -- A Subtle Language.
+
+  A very similar line has a very different meaning:
+
+    find ../* -name *.h
+
+    exec("find", {"../access", ..., "../request", "-name", "user.h", "klm.h"});
+
+  There were header files `mfs.h' and `user.h' in the present directory; we
+  end up making an invalid call to `find'. However, if there were no header
+  files in the present directory, the argument would have been passed
+  unchanged; we have neither consistent failure nor consistent success.
+
+
+
+
+
+
+
+
+
+
+
+
+
+                           Many Special Characters.
+
+  There are many characters that sometimes trigger special behaviour in the
+  shell:
+
+    $   *   {}   &   ()   >   <   ?   ~   !   :             # And many more...
+
+  It's possible to use these characters in shell commands without errors most
+  of the time -- but using them without failure all the time requires
+  advanced knowledge of shell escaping.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+             Special Characters Frustrate Compilation of Scripts
+
+  When generating shell scripts, the subtleties of special characters are more
+  than an inconvenience.
+
+ .  Shell scripts for packages and configuration management are run as root,
+    so no safeguards will protect the system from mistakes.
+
+ .  Auditing generated code is, in general, much less tractable than auditing
+    code one has written.
+
+ .  Automation tools that only partially work demand workarounds which are
+    sometimes as complicated as re-implementing the entire tool.
+
+ .  Automation will generally be applied broadly; it is difficult to
+    anticipate the kinds of filenames and arguments that will be used with
+    one's shell script compiler.
+
+
+
+
+
+
+
+
+                  Requirements For A Shell Escaping Library
+
+ .  Escape any byte sequence.
+
+ .  Offer a type level distinction between escaped and unescaped strings.
+
+ .  Offer unescaping as well as escaping.
+
+ .  Good performance, allowing escaping of thousands of strings in a short
+    period of time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                 Why Haskell?
+
+ .  Escape any byte sequence.
+
+      ->  Haskell ByteString is an efficient and safe interface to raw byte
+          arrays.
+
+
 
 
 
@@ -38,12 +173,42 @@ Shortcuts like *, &.c
 
 
 
-                              A Danger Lurks...
+                                 Why Haskell?
 
-<bad script>
+ .  Offer a type level distinction between escaped and unescaped strings.
 
-  Correctly escaping arguments in the shell is challenging and takes years of
-  experience.
+      ->  Haskell's `data' and `newtype' declarations allow lightweight
+          definition and use of types for escaping modes and escaped strings.
+
+            newtype Bash = Bash (EscapeVector EscapingMode)
+             deriving (Eq, Ord, Show)
+
+            type EscapeVector escapingMode = Vector (Char, escapingMode)
+
+            data EscapingMode = ANSIHex | ANSIBackslash | Literal | Quoted
+             deriving (Eq, Ord, Show)
+
+
+
+
+
+
+
+
+
+
+
+                                 Why Haskell?
+
+ .  Offer unescaping as well as escaping.
+
+      ->  Laziness allows us to treat and intermediate step in escaping --
+          pairing a character with its escape class -- as an intermediate
+          data structure with minimal overhead.
+
+
+
+
 
 
 
@@ -58,6 +223,33 @@ Shortcuts like *, &.c
 
 
 
+                                 Why Haskell?
+
+ .  Good performance, allowing escaping of thousands of strings in a short
+    period of time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -68,6 +260,9 @@ Shortcuts like *, &.c
 
 
                                    The End
+
+
+
 
 
 
