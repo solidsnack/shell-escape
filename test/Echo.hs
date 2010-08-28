@@ -10,7 +10,7 @@ import Data.ByteString.Char8 (unpack)
 import qualified Data.ByteString.Char8 as Char8
 import Data.Word
 import Control.Monad
-import Text.Printf
+import qualified Text.Printf
 import Data.IORef
 import Data.List
 
@@ -20,6 +20,27 @@ import Test.QuickCheck.Monadic
 import Text.ShellEscape
 
 
+--  It is best to implement the echo test with `printf':
+--
+-- .  Some echo implementations always interprete backslash escapes like \3
+--    and give us no way to turn it off. Dash is like this.
+--
+-- .  GNU echo can not be made to simply ignore options like `--help'.
+--
+--  The `printf' implementations available to me -- Bash and Dash --
+--  consistently ignore backslash escape sequences and any options that follow
+--  the format argument.
+--
+printf                      ::  (Shell t, Escape t) => t -> IO ByteString
+printf escaped               =  do
+  (i, o, e, p)              <-  shell escaped cmd
+  exit                      <-  waitForProcess p
+  hGetContents o
+ where
+  cmd                        =  "printf '%s' " ++ unpack raw
+  raw                        =  bytes escaped
+
+
 prop_echoBash               ::  ByteString -> Property
 prop_echoBash                =  something_prop escapeBash
 
@@ -27,8 +48,7 @@ prop_echoSh                 ::  ByteString -> Property
 prop_echoSh                  =  something_prop escapeSh
 
 something_prop esc b         =  monadicIO $ do
-  (pre . not) (b `elem` optionsEchoGNU)
-  assert =<< run (echoTest (esc b))
+  assert =<< run (test printf b (esc b))
 
 escapeSh                    ::  ByteString -> Sh
 escapeSh b                   =  escape b
@@ -36,38 +56,29 @@ escapeSh b                   =  escape b
 escapeBash                  ::  ByteString -> Bash
 escapeBash b                 =  escape b
 
-echoTest escaped             =  do
-  b                         <-  echo escaped
-  Data.ByteString.appendFile "./lengths" (displayLength unescaped)
-  Data.ByteString.appendFile "./chars" (displayBytes unescaped)
-  when (b /= unescaped) $ do
-    err "Echo result differs from unescaped result:"
+
+
+test cmd original escaped    =  do
+  b                         <-  cmd escaped
+  Data.ByteString.appendFile "./lengths" (displayLength original)
+  Data.ByteString.appendFile "./chars" (Char8.unlines $ displayBytes original)
+  when (b /= original) $ do
+    err "Result differs from unescaped result:"
     err "Escaped form:"
-    err (Char8.pack . ("  "++) . show $ bytes escaped)
-    err "Output of echo:"
-    err (Char8.pack . ("  "++) $ show b)
+    err (Char8.unwords . displayBytes $ bytes escaped)
+    err "Output:"
+    err (Char8.unwords . displayBytes $ b)
     err "Original:"
-    err (Char8.pack . ("  "++) $ show unescaped)
-  return (b == unescaped)
- where
-  unescaped                  =  unescape escaped
-
-echo                        ::  (Shell t, Escape t) => t -> IO ByteString
-echo escaped                 =  do
-  (i, o, e, p)              <-  shell escaped cmd
-  exit                      <-  waitForProcess p
-  hGetContents o
- where
-  cmd                        =  "echo -n " ++ unpack raw
-  raw                        =  bytes escaped
+    err (Char8.unwords . displayBytes $ original)
+  return (b == original)
 
 
-displayBytes                 =  Char8.pack . unlines
-                             .  fmap (\w ->  printf "0x%02x" w)
+displayBytes                 =  fmap Char8.pack
+                             .  fmap (\w ->  Text.Printf.printf "0x%02x" w)
                              .  Data.ByteString.unpack
 
 displayLength                =  Char8.pack
-                             .  (\w ->  printf "%4d\n" w)
+                             .  (\w ->  Text.Printf.printf "%4d\n" w)
                              .  Data.ByteString.length
 
 class (Escape t) => Shell t where
@@ -112,7 +123,6 @@ main                         =  do
       qcArgs                 =  Args Nothing tests tests 32
       qc                     =  quickCheckWith qcArgs
   err "Tests are random ByteStrings, containing any byte but null."
-  err (Char8.unwords ("GNU `echo' options are discarded:":optionsEchoGNU))
   runSh ?> do
     err "Testing Sh escaping."
     err (Char8.pack msg)
@@ -127,5 +137,4 @@ err                          =  hPutStrLn stderr
 (?>)                        ::  IORef Bool -> IO () -> IO ()
 ref ?> action                =  readIORef ref >>= (`when` action)
 
-optionsEchoGNU               =  ["-n", "-e", "-E", "--help", "--version"]
 
