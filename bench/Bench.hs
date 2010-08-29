@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings
   #-}
 
-import Data.ByteString.Char8
+import Data.ByteString.Char8 (ByteString)
 
 import Criterion.Main
 
@@ -18,9 +18,9 @@ strings =
   , "\x00\n\204\DEL"
   , "\x00\n\204\DELecho * $PWD" ]
 
-main                         =  defaultMain $ fmap bench' strings
+main = (defaultMain . concat . fmap (`fmap` strings)) [benchBash, benchSh]
  where
-  bench' s                   =  bench (show s) (whnf escape' s)
-  escape'                   ::  ByteString -> Bash
-  escape'                    =  escape
+  bench' d f s = bench (d ++ show s) (whnf f s)
+  benchBash = bench' "bash:" (escape :: ByteString -> Bash)
+  benchSh = bench' "sh:" (escape :: ByteString -> Sh)
 
