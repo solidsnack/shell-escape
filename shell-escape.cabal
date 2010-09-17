@@ -25,7 +25,7 @@ library
                               , vector >= 0.6.0.2
                               , bytestring >= 0.9
   exposed-modules             : Text.ShellEscape
-                                Text.ShellEscape.Escape
+  other-modules               : Text.ShellEscape.Escape
                                 Text.ShellEscape.EscapeVector
                                 Text.ShellEscape.Sh
                                 Text.ShellEscape.Bash
