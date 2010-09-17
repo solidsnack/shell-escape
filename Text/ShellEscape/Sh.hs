@@ -1,11 +1,19 @@
 
+{-| The Bourne shell escaper, made available for reference purposes. This is
+    an internal module; it's interface is unstable. 
+ -}
+
 module Text.ShellEscape.Sh where
+
+import Data.ByteString (ByteString)
 
 import Text.ShellEscape.Escape
 import qualified Text.ShellEscape.Put as Put
 import Text.ShellEscape.EscapeVector
 
 
+{-| A Bourne Shell escaped 'ByteString'. 
+ -}
 newtype Sh                   =  Sh (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
@@ -19,8 +27,9 @@ instance Escape Sh where
     finish Literal           =  return ()
 
 
---  Accept the present escaping mode and desired escaping mode and yield an
---  action and the resulting mode.
+{-| Accept the present escaping mode and desired escaping mode and yield an
+    action and the resulting mode.
+ -}
 act :: EscapingMode -> (Char, EscapingMode) -> (Put.Put, EscapingMode)
 act Quote (c, Quote)         =  (Put.putChar c                 , Quote)
 act Quote (c, Literal)       =  (Put.putString ['\'', c]       , Literal)
@@ -46,19 +55,8 @@ classify c | c <= '&'        =  Quote           --  0x00..0x26
            | c <= '\DEL'     =  Quote           --  0x7b..0x7f
            | otherwise       =  Quote           --  0x80..0xff
 
+{-| Bourne Shell escaping modes. 
+ -}
 data EscapingMode            =  Backslash | Literal | Quote
  deriving (Eq, Ord, Show)
-
-
-{- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  \NUL \SOH \STX \ETX \EOT \ENQ \ACK \a \b \t \n \v \f \r \SO \SI \DLE
-  \DC1 \DC2 \DC3 \DC4 \NAK \SYN \ETB \CAN \EM \SUB \ESC \FS \GS \RS \US ' '
-  ! " # $ % & ' ( ) * + , - .  / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?  @
-  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _ ` a b c
-  d e f g h i j k l m n o p q r s t u v w x y z { | } ~ \DEL
-
- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -}
-
-
 

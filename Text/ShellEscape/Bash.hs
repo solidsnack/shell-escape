@@ -1,4 +1,7 @@
 
+{-| This is an internal module; it's interface is unstable. 
+ -}
+
 module Text.ShellEscape.Bash where
 
 import Data.Maybe
@@ -12,7 +15,8 @@ import Text.ShellEscape.Escape
 import qualified Text.ShellEscape.Put as Put
 import Text.ShellEscape.EscapeVector
 
-
+{-| A Bash escaped 'ByteString'.
+ -}
 newtype Bash                 =  Bash (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
@@ -29,6 +33,8 @@ instance Escape Bash where
     renderANSI' _ (c, e)     =  (renderANSI c, e)
 
 
+{-| Bash escaping modes.
+ -}
 data EscapingMode            =  ANSIHex | ANSIBackslash | Literal | Quoted
  deriving (Eq, Ord, Show)
 

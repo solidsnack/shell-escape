@@ -7,12 +7,16 @@ author                        : Jason Dusek
 maintainer                    : oss@solidsnack.be
 homepage                      : http://github.com/solidsnack/shell-escape
 synopsis                      : Shell escaping library.
-description                   : Shell escaping library.
+description                   :
+  Shell escaping library, offering both Bourne shell and Bash style escaping
+  of ByteStrings.
 
 cabal-version                 : >= 1.6
 build-type                    : Simple
 extra-source-files            : README
-
+                              , bench/Bench.hs
+                              , test/Echo.hs
+                              , Makefile
 
 library
   build-depends               : base >= 2 && <= 5
@@ -22,6 +26,7 @@ library
                               , bytestring >= 0.9
   exposed-modules             : Text.ShellEscape
                                 Text.ShellEscape.Escape
+                                Text.ShellEscape.EscapeVector
                                 Text.ShellEscape.Sh
                                 Text.ShellEscape.Bash
                                 Text.ShellEscape.Put

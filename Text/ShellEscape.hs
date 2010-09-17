@@ -1,11 +1,13 @@
 
+
+
 module Text.ShellEscape
-  ( module Text.ShellEscape.Escape
-  , module Text.ShellEscape.Sh
-  , module Text.ShellEscape.Bash
+  ( Text.ShellEscape.Escape.Escape(..)
+  , Text.ShellEscape.Sh.Sh()
+  , Text.ShellEscape.Bash.Bash()
   ) where
 
 import Text.ShellEscape.Escape
-import Text.ShellEscape.Sh (Sh())
-import Text.ShellEscape.Bash (Bash())
+import Text.ShellEscape.Sh
+import Text.ShellEscape.Bash
 
