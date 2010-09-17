@@ -19,6 +19,11 @@ import Text.ShellEscape.EscapeVector
 newtype Sh                   =  Sh (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
+{-| Construct a Bourne Shell escaped intermediate form.
+ -}
+sh                          ::  ByteString -> Sh
+sh                           =  escape
+
 instance Escape Sh where
   escape                     =  Sh . escWith classify
   unescape (Sh v)            =  stripEsc v

@@ -21,6 +21,10 @@ import Text.ShellEscape.EscapeVector
 newtype Bash                 =  Bash (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
 
+{-| Construct a Bash escaped intermediate form.
+ -}
+bash                        ::  ByteString -> Bash
+bash                         =  escape
 
 instance Escape Bash where
   escape                     =  Bash . escWith classify
