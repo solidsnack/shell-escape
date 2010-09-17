@@ -8,7 +8,13 @@ import qualified Text.ShellEscape.Put as Put
 import Text.ShellEscape.EscapeVector
 
 
-{-| A Bourne Shell escaped 'ByteString'. 
+{-| A Bourne Shell escaped 'ByteString'. An oddity of Bourne shell escaping is
+    the absence of escape codes for newline and other ASCII control
+    characters. These bytes are simply placed literally in single quotes; the
+    effect is that a Bourne Shell escaped string may cover several lines and
+    contain non-ASCII bytes. Runs of bytes that must be escaped are wrapped in
+    @\'...\'@; bytes that are acceptable as literals in Bourne Shell are left
+    as is.
  -}
 newtype Sh                   =  Sh (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)

@@ -12,7 +12,11 @@ import Text.ShellEscape.Escape
 import qualified Text.ShellEscape.Put as Put
 import Text.ShellEscape.EscapeVector
 
-{-| A Bash escaped 'ByteString'.
+{-| A Bash escaped 'ByteString'. The strings are wrapped in @$\'...\'@ if any
+    bytes within them must be escaped; otherwise, they are left as is.
+    Newlines and other control characters are represented as ANSI escape
+    sequences. High bytes are represented as hex codes. Thus Bash escaped
+    strings will always fit on one line and never contain non-ASCII bytes.
  -}
 newtype Bash                 =  Bash (EscapeVector EscapingMode)
  deriving (Eq, Ord, Show)
