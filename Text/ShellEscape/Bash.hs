@@ -1,7 +1,4 @@
 
-{-| This is an internal module; it's interface is unstable. 
- -}
-
 module Text.ShellEscape.Bash where
 
 import Data.Maybe

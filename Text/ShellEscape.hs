@@ -1,5 +1,6 @@
 
-
+{-| Typed shell escaping for Bourne Shell and Bash.
+ -}
 
 module Text.ShellEscape
   ( Text.ShellEscape.Escape.Escape(..)

@@ -1,7 +1,6 @@
 
 module Text.ShellEscape.Escape where
 
-
 import Data.ByteString
 
 {-| A type class for objects that represent an intermediate state of

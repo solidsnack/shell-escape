@@ -1,8 +1,4 @@
 
-{-| The Bourne shell escaper, made available for reference purposes. This is
-    an internal module; it's interface is unstable. 
- -}
-
 module Text.ShellEscape.Sh where
 
 import Data.ByteString (ByteString)
