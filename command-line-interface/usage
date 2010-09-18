@@ -1,0 +1,15 @@
+
+ USAGE: escape <options>* <file>?
+
+  Escapes standard input for consumption by Bash (the default) or Bourne
+  Shell.
+
+    --sh
+    --bash
+    --in-0
+    --in-all
+    --out-space
+    --out-nl
+    --out-0
+
+

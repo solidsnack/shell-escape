@@ -1,0 +1,23 @@
+name                          : shell-escape-cli
+version                       : 0.0.0
+category                      : Text
+license                       : BSD3
+license-file                  : LICENSE
+author                        : Jason Dusek
+maintainer                    : oss@solidsnack.be
+homepage                      : http://github.com/solidsnack/shell-escape
+synopsis                      : Shell escaping command line tool.
+description                   :
+  A command line tool to escape standard input for Bourne Shell or Bash.
+  Useful when constructing commands from the output of other commands.
+
+cabal-version                 : >= 1.6
+build-type                    : Simple
+
+executable                      escape
+  main-is                     : Escape.hs
+  build-depends               : base >= 2 && <= 5
+                              , shell-escape >= 0.1.0 && < 1
+                              , containers
+                              , bytestring >= 0.9
+
