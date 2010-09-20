@@ -7,6 +7,7 @@ import qualified Text.ShellEscape as Esc
 main                         =  do
   (options, args)           <-  getArgsAndOptions
 
+
 data EscapingMode            =  Sh | Bash
  deriving (Eq, Ord, Show)
 data Output                  =  Words | Lines
