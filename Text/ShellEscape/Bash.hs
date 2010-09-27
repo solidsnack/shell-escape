@@ -51,7 +51,6 @@ renderANSI c =
     ANSIBackslash           ->  Put.putString $ backslashify c
 
 backslashify                ::  Char -> String
-backslashify '\ESC'          =  "\\e"
 backslashify c               =  (take 2 . drop 1 . show) c
 
 hexify                      ::  Char -> String
@@ -60,8 +59,6 @@ hexify                       =  printf "\\x%02X" . ord
 classify                    ::  Char -> EscapingMode
 classify c | c <= '\ACK'     =  ANSIHex
            | c <= '\r'       =  ANSIBackslash
-           | c <= '\SUB'     =  ANSIHex
-           | c == '\ESC'     =  ANSIBackslash
            | c <= '\US'      =  ANSIHex
            | c <= '&'        =  Quoted
            | c == '\''       =  ANSIBackslash
