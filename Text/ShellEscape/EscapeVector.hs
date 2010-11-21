@@ -6,7 +6,7 @@ import qualified Data.ByteString.Char8 as ByteString
 
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
-import qualified Data.Vector.Mutable as Vector
+import qualified Data.Vector.Mutable as Vector (new, write)
 
 import qualified Text.ShellEscape.Put as Put
 
