@@ -3,12 +3,13 @@
 
 import System.Environment
 import System.Process (runInteractiveProcess, waitForProcess, ProcessHandle)
-import System.IO (Handle, stderr, stdout, stdin)
+import System.IO (Handle, stderr, stdout, stdin, hClose)
 import Data.ByteString (ByteString, pack, hGetContents, hPutStrLn)
 import qualified Data.ByteString
 import Data.ByteString.Char8 (unpack)
 import qualified Data.ByteString.Char8 as Char8
 import Data.Word
+import Control.Applicative
 import Control.Monad
 import qualified Text.Printf
 import Data.IORef
@@ -17,7 +18,7 @@ import Data.List
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
 
-import Text.ShellEscape
+import Text.ShellEscape hiding (sh, bash)
 
 
 --  It is best to implement the echo test with `printf':
@@ -35,10 +36,9 @@ printf                      ::  (Shell t, Escape t) => t -> IO ByteString
 printf escaped               =  do
   (i, o, e, p)              <-  shell escaped cmd
   exit                      <-  waitForProcess p
-  hGetContents o
+  hGetContents o <* mapM_ hClose [i, o, e]
  where
-  cmd                        =  "printf '%s' " ++ unpack raw
-  raw                        =  bytes escaped
+  cmd                        =  "printf '%s' " ++ unpack (bytes escaped)
 
 
 prop_echoBash               ::  ByteString -> Property
@@ -94,13 +94,12 @@ bash s = runInteractiveProcess "bash" ["-c", s] Nothing Nothing
 
 instance Arbitrary ByteString where
   arbitrary                  =  do
-    bytes                   <-  arbitrary :: Gen [Word8]
-    NonEmpty bytes'         <-  arbitrary :: Gen (NonEmptyList Word8)
-    pack `fmap` elements [bytes', bytes', bytes, bytes', bytes']
-
-instance Arbitrary Word8 where
-  arbitrary                  =  fmap fromIntegral (choose ( 0x01 :: Int
-                                                          , 0xFF :: Int ))
+    bytes                   <-  arbitrary :: Gen [NonZero Word8]
+    NonEmpty bytes'         <-  arbitrary :: Gen (NonEmptyList (NonZero Word8))
+    pack `fmap` elements
+                (fmap unNonZero `fmap` [bytes', bytes', bytes, bytes', bytes'])
+   where
+    unNonZero (NonZero t) = t
 
 main                         =  do
   runSh                     <-  newIORef True
@@ -120,7 +119,7 @@ main                         =  do
     _                       ->  error "Invalid arguments."
   tests                     <-  readIORef testsR
   let msg                    =  "Performing " ++ show tests ++ " tests."
-      qcArgs                 =  Args Nothing tests tests 32
+      qcArgs                 =  Args Nothing tests tests 32 False
       qc                     =  quickCheckWith qcArgs
   err "Tests are random ByteStrings, containing any byte but null."
   runSh ?> do
