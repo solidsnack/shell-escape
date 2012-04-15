@@ -39,7 +39,7 @@ instance Escape Sh where
  -}
 act :: EscapingMode -> (Char, EscapingMode) -> (Put.Put, EscapingMode)
 act Quote (c, Quote)         =  (Put.putChar c                 , Quote)
-act Quote (c, Literal)       =  (Put.putString ['\'', c]       , Literal)
+act Quote (c, Literal)       =  (Put.putChar c                 , Quote)
 act Quote (c, Backslash)     =  (Put.putString ['\'', '\\', c] , Literal)
 act Backslash (c, Backslash) =  (Put.putChar c                 , Literal)
 act Backslash (c, Quote)     =  (Put.putString ['\\', '\'', c] , Quote)
