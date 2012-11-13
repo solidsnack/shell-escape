@@ -4,9 +4,9 @@
 import System.Environment
 import System.Process (runInteractiveProcess, waitForProcess, ProcessHandle)
 import System.IO (Handle, stderr, stdout, stdin, hClose)
-import Data.ByteString (ByteString, pack, hGetContents, hPutStrLn)
+import Data.ByteString (ByteString, pack, hGetContents)
 import qualified Data.ByteString
-import Data.ByteString.Char8 (unpack)
+import Data.ByteString.Char8 (unpack, hPutStrLn)
 import qualified Data.ByteString.Char8 as Char8
 import Data.Word
 import Control.Applicative
