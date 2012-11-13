@@ -68,6 +68,8 @@ classify c | c <= '\ACK'     =  ANSIHex
            | c <= 'Z'        =  Literal
            | c == '['        =  Quoted
            | c == '\\'       =  ANSIBackslash
+           | c <= ']'        =  Quoted
+           | c == '_'        =  Literal
            | c <= '`'        =  Quoted
            | c <= 'z'        =  Literal
            | c <= '~'        =  Quoted
