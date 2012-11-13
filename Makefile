@@ -30,7 +30,7 @@ test: test/chars.histogram test/lengths.histogram
 
 test/echo: test/Echo.hs
 	mkdir -p test/build
-	${GHC} test/build -O2 test/Echo.hs -o test/echo
+	${GHC} test/build test/Echo.hs -o test/echo
 
 .PHONY: test_run
 test_run: test/echo
