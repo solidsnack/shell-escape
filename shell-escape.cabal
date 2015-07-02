@@ -1,5 +1,5 @@
 name                          : shell-escape
-version                       : 0.1.2
+version                       : 0.2.0
 category                      : Text
 license                       : BSD3
 license-file                  : LICENSE
@@ -24,10 +24,11 @@ library
                               , containers
                               , vector >= 0.6.0.2
                               , bytestring >= 0.9
-  exposed-modules             : Text.ShellEscape
-  other-modules               : Text.ShellEscape.Escape
-                                Text.ShellEscape.EscapeVector
-                                Text.ShellEscape.Sh
-                                Text.ShellEscape.Bash
-                                Text.ShellEscape.Put
+  exposed-modules             : Data.ByteString.ShellEscape
+                                Text.ShellEscape
+  other-modules               : Data.ByteString.ShellEscape.Escape
+                                Data.ByteString.ShellEscape.EscapeVector
+                                Data.ByteString.ShellEscape.Sh
+                                Data.ByteString.ShellEscape.Bash
+                                Data.ByteString.ShellEscape.Put
 

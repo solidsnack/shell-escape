@@ -1,11 +1,11 @@
 
-module Text.ShellEscape.Sh where
+module Data.ByteString.ShellEscape.Sh where
 
 import Data.ByteString (ByteString)
 
-import Text.ShellEscape.Escape
-import qualified Text.ShellEscape.Put as Put
-import Text.ShellEscape.EscapeVector
+import Data.ByteString.ShellEscape.Escape
+import qualified Data.ByteString.ShellEscape.Put as Put
+import Data.ByteString.ShellEscape.EscapeVector
 
 
 {-| A Bourne Shell escaped 'ByteString'. An oddity of Bourne shell escaping is

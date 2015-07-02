@@ -1,7 +1,7 @@
 
 import Data.ByteString
 
-import qualified Text.ShellEscape as Esc
+import qualified Data.ByteString.ShellEscape as Esc
 
 
 main                         =  do

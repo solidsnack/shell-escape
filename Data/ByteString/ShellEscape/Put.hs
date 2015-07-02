@@ -1,5 +1,5 @@
 
-module Text.ShellEscape.Put
+module Data.ByteString.ShellEscape.Put
   ( module Data.Binary.Put
   , putChar
   , putString

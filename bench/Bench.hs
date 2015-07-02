@@ -6,7 +6,7 @@ import Data.ByteString.Char8 (ByteString)
 
 import Criterion.Main
 
-import Text.ShellEscape
+import Data.ByteString.ShellEscape
 
 
 strings                     ::  [ByteString]

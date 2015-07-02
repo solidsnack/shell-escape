@@ -1,5 +1,5 @@
 
-module Text.ShellEscape.Escape where
+module Data.ByteString.ShellEscape.Escape where
 
 import Data.ByteString
 

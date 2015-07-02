@@ -18,7 +18,7 @@ import Data.List
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
 
-import Text.ShellEscape hiding (sh, bash)
+import Data.ByteString.ShellEscape hiding (sh, bash)
 
 
 --  It is best to implement the echo test with `printf':

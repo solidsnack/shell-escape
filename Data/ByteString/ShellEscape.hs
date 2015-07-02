@@ -2,7 +2,7 @@
 {-| Typed shell escaping for Bourne Shell and Bash.
  -}
 
-module Text.ShellEscape
+module Data.ByteString.ShellEscape
   ( Data.ByteString.ShellEscape.Escape.Escape(..)
   , Data.ByteString.ShellEscape.Sh.Sh()
   , Data.ByteString.ShellEscape.Sh.sh

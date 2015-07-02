@@ -1,5 +1,5 @@
 
-module Text.ShellEscape.Bash where
+module Data.ByteString.ShellEscape.Bash where
 
 import Data.Maybe
 import Data.Char
@@ -8,9 +8,9 @@ import Data.ByteString (ByteString)
 
 import qualified Data.Vector as Vector
 
-import Text.ShellEscape.Escape
-import qualified Text.ShellEscape.Put as Put
-import Text.ShellEscape.EscapeVector
+import Data.ByteString.ShellEscape.Escape
+import qualified Data.ByteString.ShellEscape.Put as Put
+import Data.ByteString.ShellEscape.EscapeVector
 
 {-| A Bash escaped 'ByteString'. The strings are wrapped in @$\'...\'@ if any
     bytes within them must be escaped; otherwise, they are left as is.

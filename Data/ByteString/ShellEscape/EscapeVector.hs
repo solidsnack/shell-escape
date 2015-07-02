@@ -1,5 +1,5 @@
 
-module Text.ShellEscape.EscapeVector where
+module Data.ByteString.ShellEscape.EscapeVector where
 
 import Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as ByteString
@@ -8,7 +8,7 @@ import Data.Vector (Vector)
 import qualified Data.Vector as Vector
 import qualified Data.Vector.Mutable as Vector (new, write)
 
-import qualified Text.ShellEscape.Put as Put
+import qualified Data.ByteString.ShellEscape.Put as Put
 
 
 type EscapeVector escapingMode = Vector (Char, escapingMode)
