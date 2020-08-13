@@ -23,7 +23,7 @@ import Data.ByteString.ShellEscape hiding (sh, bash)
 
 --  It is best to implement the echo test with `printf':
 --
--- .  Some echo implementations always interprete backslash escapes like \3
+-- .  Some echo implementations always interpret backslash escapes like \3
 --    and give us no way to turn it off. Dash is like this.
 --
 -- .  GNU echo can not be made to simply ignore options like `--help'.
