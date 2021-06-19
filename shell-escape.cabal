@@ -11,7 +11,7 @@ description                   :
   Shell escaping library, offering both Bourne shell and Bash style escaping
   of ByteStrings.
 
-cabal-version                 : >= 1.6
+cabal-version                 : >= 1.8
 build-type                    : Simple
 extra-source-files            : README
                               , bench/Bench.hs
